@@ -1,0 +1,6 @@
+def KGQA(question, graph):
+    """
+    answer the question based on the knowledge graph
+    """
+    question = "{question}"
+    answer = []
