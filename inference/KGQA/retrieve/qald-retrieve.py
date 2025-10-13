@@ -241,6 +241,7 @@ def extract_graph_multiprocess(data, max_workers: Optional[int] = None):
 if __name__ == "__main__":
     data = json.load(open('../dataset/' + DATASET + '/qald_10.json', 'r', encoding='utf-8'))["questions"]
     processed = extract_graph_multiprocess(data)
+    os.makedirs('../graph/' + DATASET,exist_ok=True)
     out_path = '../graph/' + DATASET + '/origin.json'
     json.dump(processed, open(out_path, 'w', encoding='utf-8'), indent=2, ensure_ascii=False)
     print(f"Saved {len(processed)} items to {out_path}")
