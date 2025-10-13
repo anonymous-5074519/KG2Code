@@ -1,0 +1,6 @@
+def KGC(triple, graph):
+    """
+    complete the missing part of the triple based on the knowledge graph
+    """
+    triple = {triple}
+    answer = []
