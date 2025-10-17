@@ -1,1 +1,1 @@
-Please checkpoints for KG2Code models.
+### Please put checkpoints for KG2Code models.
