@@ -1,4 +1,4 @@
-llm='Llama-2-7b-chat-hf'
+llm='Meta-Llama-3.1-8B-Instruct'
 dataset='pretrain_text'
 train_batch_size=8
 eval_batch_size=8
