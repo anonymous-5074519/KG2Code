@@ -9,8 +9,7 @@ data = json.load(open('all_question.json', 'r', encoding='utf-8'))
 
 def init_client():
     return OpenAI(
-        api_key='sk-DJrylVD3AU0H2PVcdTD88vj9paUfi0kYCkWXBJF85e4Ut6lt',
-        base_url='https://35.aigcbest.top/v1'
+        api_key='YOUR API KEY'
     )
 
 cot_prompt_template='''Your task is to generate the Chain-of-Thought(CoT) reasoning process given the question, the question-related graph, and the answer.
@@ -82,3 +81,4 @@ if __name__ == "__main__":
                     print(f"Checkpoint saved to {filename} after {i} samples.\n")
 
     json.dump(results, open("all_question_cot.json", 'w', encoding='utf-8'), indent=2, ensure_ascii=False)
+
