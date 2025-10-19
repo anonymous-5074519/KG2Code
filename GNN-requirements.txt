@@ -1,0 +1,36 @@
+# ---------------------------
+# Python version: 3.8
+# ---------------------------
+
+# PyTorch + cu118 (official wheel index)
+--extra-index-url https://download.pytorch.org/whl/cu118
+torch==2.0.0+cu118
+torchvision==0.15.1+cu118
+
+# PyTorch Geometric extensions (strictly matched to torch==2.0.0+cu118)
+-f https://data.pyg.org/whl/torch-2.0.0+cu118.html
+pyg_lib
+torch_scatter
+torch_sparse
+torch_cluster
+torch_spline_conv
+torch-geometric==2.6.1
+
+# Core dependencies
+transformers==4.46.3
+accelerate==1.0.1
+peft==0.13.2
+sentencepiece==0.2.0
+datasets==3.1.0
+ogb==1.3.6
+pandas==2.0.3
+scipy==1.10.1
+gensim==4.3.3
+protobuf==4.22.1
+pcst_fast==1.0.10
+scikit-learn==1.3.2
+wandb==0.21.4
+tokenizers==0.20.3
+safetensors==0.5.3
+huggingface-hub==0.34.4
+pyarrow==17.0.0
