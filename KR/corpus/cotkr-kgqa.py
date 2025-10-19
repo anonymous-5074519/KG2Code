@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 data=json.load(open('../../pretrain/question/all_question_graph_extend.json','r',encoding='utf-8'))
 
-client=OpenAI(api_key='sk-DJrylVD3AU0H2PVcdTD88vj9paUfi0kYCkWXBJF85e4Ut6lt',base_url='https://35.aigcbest.top/v1')
+client=OpenAI(api_key='YOUR API KEY')
 
 kr_prompt='''Your task is to summarize the relevant information that is helpful to answer the question from the following subgraph. Please think step by step and iteratively generate the reasoning chain and the corresponding knowledge.
 Subgraph: (Pastura, country, United States) (Jacob Lindley, country of citizenship, United States) (Rocky Mountains, country, United States) (George Junior Republic, country, United States) (Sonny's BBQ, country, United States) (Bobby Orrock, country of citizenship, United States) (Sonny's BBQ, instance of, business) (Waste No Food, country, United States) (Whitey Moore, country of citizenship, United States) (Thomas Morrow Reavley, country of citizenship, United States) (beer in San Diego County, California, country, United States) (WNJB-FM, country, United States) (United States, country, United States) (Community Foundation for Northeast Georgia, country, United States) (Lanesville Township, country, United States) (Planet B-Boy, country of origin, United States) (Brian Dietzen, country of citizenship, United States) (Palestine, country, United States) (Jean Klock Park, country, United States) (Nampa High School, country, United States) (Nicholas Raymond Cerio, country of citizenship, United States) (Daniel Shulman, country of citizenship, United States) (John Whitaker, country of citizenship, United States) (United States, official language, English) (Adams Memorial Building, country, United States) (Mackinac Transportation Company, country, United States) (Ben Hill County Courthouse, country, United States) (Lily Lake, country, United States) (Normie Glick, country of citizenship, United States) (Sonny's BBQ, headquarters location, Winter Park)
@@ -142,4 +142,5 @@ for sample in tqdm(data):
 os.makedirs("cotkr", exist_ok=True)   
 json.dump(process,open('cotkr/kgqa.json','w',encoding='utf-8'),indent=2,ensure_ascii=False)
     
+
     
