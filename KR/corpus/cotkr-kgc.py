@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 data=json.load(open('../../pretrain/kgc/kgc_cot.json','r',encoding='utf-8'))
 
-client=OpenAI(api_key='sk-DJrylVD3AU0H2PVcdTD88vj9paUfi0kYCkWXBJF85e4Ut6lt',base_url='https://35.aigcbest.top/v1')
+client=OpenAI(api_key='YOUR API KEY')
 
 kr_prompt='''Your task is to summarize the relevant information that is helpful to predict the missing part of the triple from the following subgraph. Please think step by step and iteratively generate the reasoning chain and the corresponding knowledge.
 Subgraph: (X-Alfonso, country of citizenship, Cuba) (X-Alfonso, genre, jazz fusion) (Habana Blues, composer, X-Alfonso) (X-Alfonso, place of birth, Havana) (X-Alfonso, instance of, human)
@@ -90,4 +90,5 @@ for sample in tqdm(data):
         break
    
 os.makedirs("cotkr", exist_ok=True)   
+
 json.dump(process,open('cotkr/kgc.json','w',encoding='utf-8'),indent=2,ensure_ascii=False)  
