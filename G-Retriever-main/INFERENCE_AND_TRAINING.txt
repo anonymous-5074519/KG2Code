@@ -1,0 +1,94 @@
+G-Retriever 推理与训练快速上手（适合初学者）
+
+本文档汇总仓库中的关键脚本，带你以最短路径跑通：数据预处理 → 冻结 LLM 训练（GNN+Text 与仅 GNN）→ 推理导出 CSV；并说明自动化测试脚本的使用与可调参数。
+
+快速运行（5 行跑通，以 KGQA + GNN+Text 为例）
+1) bash g_retriver.sh
+2) python -m src.dataset.preprocess.kgqa && python -m src.dataset.kgqa
+3) export CUDA_VISIBLE_DEVICES=0
+4) python train.py --dataset kgqa --model_name graph_llm --llm_model_path /path/to/Meta-Llama-3.1-8B-Instruct --max_memory 24 --batch_size 4 --eval_batch_size 4 --only_gnn False --llm_frozen True --llm_model_name Meta-Llama-3.1-8B-Instruct
+5) python inference.py --dataset kgqa --model_name graph_llm --max_memory 24 --llm_model_path /path/to/Meta-Llama-3.1-8B-Instruct --eval_batch_size 12 --only_gnn False --llm_frozen True --llm_model_name Meta-Llama-3.1-8B-Instruct --ckpt_path /path/to/best.pth
+
+仅 GNN 请见下文“训练：仅 GNN”。若切换到 KGC，将 --dataset kgqa 改为 --dataset kgc，并替换 --ckpt_path 与 --llm_model_name（见参数对照）。
+
+1. 环境准备与约定
+- 建议在 Linux/WSL2 下运行 .sh；Windows 原生命令行不支持 bash。
+- 安装依赖：bash g_retriver.sh
+- 模型目录 --llm_model_path 例如：/path/to/Meta-Llama-3.1-8B-Instruct、/path/to/DeepSeek-Coder-V2-Lite-Instruct
+- GPU 指定：export CUDA_VISIBLE_DEVICES=0,1,...；--max_memory 与 GPU 数量一致，用逗号分隔（单位 GB）。
+
+2. 数据预处理
+- KGC：
+  python -m src.dataset.preprocess.kgc
+  python -m src.dataset.kgc
+- KGQA：
+  python -m src.dataset.preprocess.kgqa
+  python -m src.dataset.kgqa
+- 可选：自定义目录（与测试脚本一致）
+  KGC_JSON_DIR=tmp_json/your_set, KGC_DATASET_DIR=dataset/Test_your_set
+  KGQA_JSON_DIR=tmp_json/your_set, KGQA_DATASET_DIR=dataset/Test_your_set
+
+3. 训练（冻结 LLM）
+3.1 仅 GNN
+- KGC：
+  export CUDA_VISIBLE_DEVICES=0; export ONLY_GNN=1
+  python train.py --dataset kgc --model_name graph_llm --llm_model_path /path/to/Meta-Llama-3.1-8B-Instruct --max_memory 24 --batch_size 1 --only_gnn True --eval_batch_size 1
+- KGQA：
+  export CUDA_VISIBLE_DEVICES=0; export ONLY_GNN=1
+  python train.py --dataset kgqa --model_name graph_llm --llm_model_path /path/to/Meta-Llama-3.1-8B-Instruct --max_memory 24 --batch_size 1 --only_gnn True --eval_batch_size 1
+
+3.2 GNN+Text
+- KGC（DeepSeek）：
+  export CUDA_VISIBLE_DEVICES=0,1
+  python train.py --dataset kgc --model_name graph_llm --llm_model_path /path/to/DeepSeek-Coder-V2-Lite-Instruct --max_memory 24,24 --batch_size 4 --eval_batch_size 4 --only_gnn False --llm_frozen True --llm_model_name DeepSeek-Coder-V2-Lite-Instruct
+- KGQA（Llama）：
+  export CUDA_VISIBLE_DEVICES=0,1
+  python train.py --dataset kgqa --model_name graph_llm --llm_model_path /path/to/Meta-Llama-3.1-8B-Instruct --max_memory 24,24 --batch_size 4 --eval_batch_size 4 --only_gnn False --llm_frozen True --llm_model_name Meta-Llama-3.1-8B-Instruct
+
+4. 推理与导出 CSV
+4.1 KGQA
+- 仅 GNN（DeepSeek）：
+  export CUDA_VISIBLE_DEVICES=0; export ONLY_GNN=1
+  python inference.py --dataset kgqa --model_name graph_llm --max_memory 24 --llm_model_path /path/to/DeepSeek-Coder-V2-Lite-Instruct --eval_batch_size 32 --only_gnn True --llm_frozen True --llm_model_name DeepSeek-Coder-V2-Lite-Instruct-GNN --ckpt_path /path/to/best_gnn_ckpt.pth
+- GNN+Text（Llama）：
+  export CUDA_VISIBLE_DEVICES=0,1
+  python inference.py --dataset kgqa --model_name graph_llm --max_memory 24,24 --llm_model_path /path/to/Meta-Llama-3.1-8B-Instruct --eval_batch_size 12 --only_gnn False --llm_frozen True --llm_model_name Meta-Llama-3.1-8B-Instruct --ckpt_path /path/to/best_llama_ckpt.pth
+
+4.2 切换到 KGC 的最小改动
+- 将 --dataset kgqa 改为 --dataset kgc；
+- 替换 --ckpt_path 为 KGC 的权重；
+- 仅 GNN 时 --llm_model_name 使用带 -GNN 的名称。
+- 可选 --output_dir 指定输出目录。
+
+5. 自动化测试脚本
+- run_Test_all_GNNonly_kgc.sh：KGC 仅 GNN 批量测试
+- run_Test_all_GNNonly_kgqa.sh：KGQA 仅 GNN 批量测试
+- run_Test_all_kgqa.sh：KGQA GNN+Text 批量测试
+- 运行：bash run_Test_all_GNNonly_kgc.sh | bash run_Test_all_GNNonly_kgqa.sh | bash run_Test_all_kgqa.sh
+- 常改参数：
+  LLAMA_MODEL_PATH、LLAMA_CKPT、DEEPSEEK_MODEL_PATH、DEEPSEEK_CKPT
+  FILES=(...) 评测集（放在 Test/）
+  SKIP_DEEPSEEK_FILES=(...) DeepSeek 跳过名单（stem 名）
+  CUDA_VISIBLE_DEVICES / eval_batch_size / --output_dir
+- 流程：自动拷贝至 tmp_json/<stem>/test.jsonl → 预处理到 dataset/Test_<stem> → 输出到 output/Test/<stem>/<task>/*.csv
+
+6. 参数对照
+- CUDA_VISIBLE_DEVICES：指定 GPU，如 0 或 0,1
+- --max_memory：按 GPU 顺序的显存上限（GB），单卡 24；双卡 24,24
+- --dataset：kgqa 或 kgc
+- --only_gnn：True/False
+- --llm_frozen：一般 True
+- --llm_model_path：本地权重目录
+- --llm_model_name：模型名（仅 GNN 时使用 *-GNN）
+- --ckpt_path：训练得到的最佳权重路径
+- --batch_size / --eval_batch_size：按显存调整
+- --output_dir：推理输出目录
+
+7. FAQ
+- Windows：用 WSL2 或远程 Linux，.sh 在 bash 下执行
+- CSV 位置：单次推理在 output/<task>/；批量脚本在 output/Test/<stem>/<task>/*.csv
+- KGC/KGQA 切换：修改 --dataset 与对应权重和 --llm_model_name
+
+脚本清单：run_GNN_only.sh、run_GNN&Text.sh、run_inference.sh、run_Test_all_GNNonly_kgc.sh、run_Test_all_GNNonly_kgqa.sh、run_Test_all_kgqa.sh
+
+
