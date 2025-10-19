@@ -249,3 +249,5 @@ Place your xxx.jsonl/json file into the Test/ directory and add its filename to 
 - The number of commas in --max_memory must match the number of GPUs in CUDA_VISIBLE_DEVICES.
 - If you encounter an OOM (Out-Of-Memory) error, reduce batch_size / eval_batch_size or decrease the number of GPUs used.
 - Mismatched weight or model paths can cause loading errors — ensure that --llm_model_name and the checkpoint naming are consistent (e.g., whether -GNN is included).
+## Contact
+Please consider creating a new issue. We will respond to your questions within a few days.
