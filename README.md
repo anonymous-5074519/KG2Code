@@ -30,7 +30,7 @@ pretrain/
     └── DeepSeek-R1-Distill-Llama-8B/                       
 ```
 ### Dataset Setup
-We evaluate our method on six datasets, [QALD-9-plus](https://github.com/KGQA/QALD_9_plus), [QALD-10](https://github.com/KGQA/QALD-10), [Wikidata5M-Transductive](https://deepgraphlearning.github.io/project/wikidata5m), [Wikidata5M-Transductive](https://deepgraphlearning.github.io/project/wikidata5m), [GrailQA](https://dki-lab.github.io/GrailQA/), and [WN18RR](https://github.com/TimDettmers/ConvE). Download QALD-9-plus to ```KG2Code/inference/KGQA/dataset/QALD-9```. Download QALD-10 to ```KG2Code/inference/KGQA/dataset/QALD-10```. Download Wikidata5M to ```KG2Code/inference/KGC/wikidata5m```. For GrailQA, please download the original [dev set](https://dki-lab.github.io/GrailQA/) to ```KG2Code/inference/KGQA/transfer-KGQA/dataset/grailqa``` and the [2-Hop retrieval results](https://github.com/wuyike2000/CoTKR/tree/main/inference/open/retrieve/2hop/format/grailqa.json) to  ```KG2Code/inference/KGQA/transfer-KGQA/dataset/grailqa```. For WN18RR, please download the [processed data](https://github.com/yao8839836/kg-bert/tree/master/data/WN18RR) to ```KG2Code/inference/KGC/transfer-KGC/dataset/WN18RR```.
+We evaluate our method on six datasets, [QALD-9-plus](https://github.com/KGQA/QALD_9_plus), [QALD-10](https://github.com/KGQA/QALD-10), [Wikidata5M-Transductive](https://deepgraphlearning.github.io/project/wikidata5m), [Wikidata5M-Inductive](https://deepgraphlearning.github.io/project/wikidata5m), [GrailQA](https://dki-lab.github.io/GrailQA/), and [WN18RR](https://github.com/TimDettmers/ConvE). Download QALD-9-plus to ```KG2Code/inference/KGQA/dataset/QALD-9```. Download QALD-10 to ```KG2Code/inference/KGQA/dataset/QALD-10```. Download Wikidata5M to ```KG2Code/inference/KGC/wikidata5m```. For GrailQA, please download the original [dev set](https://dki-lab.github.io/GrailQA/) to ```KG2Code/inference/KGQA/transfer-KGQA/dataset/grailqa``` and the [2-Hop retrieval results](https://github.com/wuyike2000/CoTKR/tree/main/inference/open/retrieve/2hop/format/grailqa.json) to  ```KG2Code/inference/KGQA/transfer-KGQA/dataset/grailqa```. For WN18RR, please download the [processed data](https://github.com/yao8839836/kg-bert/tree/master/data/WN18RR) to ```KG2Code/inference/KGC/transfer-KGC/dataset/WN18RR```.
 ```
 KG2Code/
 └── inference/
@@ -108,6 +108,7 @@ We conduct transfer experiments on GrailQA. For retrieval results, we directly u
 2. Run ```preprocess.py``` to process the files.
 3. Go to ```KG2Code/inference/KGQA/transfer-KGQA/answer```.
 4. Run ```answer-code.py``` to get the results for KG2Code. Run ```answer-origin.py``` to get the results for Raw baseline. Run ```answer-text.py``` to get the results for Text baseline.
+5. For the GNN/GNN+Text baselines, please first generate the test files in the required format, and then perform prediction using the fine-tuned Llama-3.1-8B-Instruct model. For detailed instructions, refer to the GNN/GNN+Text section.
 ### KGC
 1. Go to ```KG2Code/inference/KGC/retrieve```. ```entity.pkl``` and ```relation.pkl``` are provided in [dict.zip](https://drive.google.com/file/d/190_njuwwOgQaSWRB0WBvIQDbRe7cn3rG/view?usp=sharing). Please download them directly and put it in ```KG2Code/inference/KGC/retrieve``` and ```KG2Code/inference/KGC/infer```. 
 2. Run ```create_dict.py``` to create the dict files for the following steps.
@@ -124,7 +125,7 @@ We conduct transfer experiments on WN18RR. We follow [KG-BERT](https://github.co
 ###  KG2Text Variants
 For three varaints of KG2Text (KG-to-Text, Summary, CoTKR), we first collect the corpus from gpt-4o and then instruct tune Llama-3.1-8B-Instruct.
 We provide the fine-tuned [lora checkpoints](https://drive.google.com/file/d/1NTUnO1vGSC5dPiF3sToPLrWat3nfJkHL/view?usp=sharing). You can download it and escape the corpus construction phase.
-We also provide the [collected corpus](https://drive.google.com/file/d/1pkZan98mFJ5H6Jhr-IjRMozTmVHbJljt/view?usp=sharing). You can download it and instruct tune your own models without collecting training data.
+We also provide the [collected corpus](https://drive.google.com/file/d/1bTduLUZQs-wqVtXuLLSd2m47Qm7nG08_/view?usp=sharing). You can download it and instruct tune your own models without collecting training data.
 1. Copy the dict file (endict.pkl, redict.pkl, in_en_re.pkl, out_en_re.pkl, in_triple.pkl, out_triple.pkl) from ```KG2Code/inference/KGC/infer``` into ```KG2Code/KR/answer```.
 2. Go to ```KG2Code/KR/corpus```.
 3. Run ```kg-to-text.py``` to collect the training corpus for KG-to-Text. Run ```summary-kgqa.py``` to collect the training corpus for summary for KGQA. Run ```summary-kgc.py``` to collect the training corpus for summary for KGC. Run ```cotkr-kgqa.py``` to collect the training corpus for cotkr for KGQA. Run ```cotkr-kgc.py``` to collect the training corpus for cotkr for KGC.
@@ -142,6 +143,7 @@ python -m src.dataset.preprocess.kgqa
 python -m src.dataset.kgqa
 ```
 #### Training
+**We provide [our checkpoints](https://drive.google.com/file/d/13WQI_pFElSu0uzZB6JbM6-dnA3cnNzU2/view?usp=sharing). You can use it directly and escape model training.**
 1. Go to ```KG2Code/G-Retriever-main```.
 2. GNN: 
 ```bash
@@ -201,6 +203,9 @@ python inference.py \
   --llm_model_name Meta-Llama-3.1-8B-Instruct \
   --ckpt_path /path/to/best_llama_ckpt.pth
 ```
+#### Evaluation
+1. Go to ```KG2Code/G-Retriever-main```.
+2. Run ```eval_gnn.py```. Do not forget to modify the ```FILE_PATH```.
 #### Script Introduction
 We provide script files to facilitate easier reproduction.
 - Training: `run_GNN_only.sh` for GNN and `run_GNN&Text.sh` for GNN+Text.
@@ -239,6 +244,7 @@ Place your xxx.jsonl/json file into the Test/ directory and add its filename to 
 | `--batch_size` | Training batch size | Adjust according to GPU memory |
 | `--eval_batch_size` | Inference batch size | Adjust according to GPU memory and model size |
 | `--output_dir` | Output directory for inference results | Defaults to a predefined structure if not specified |
+
 **Tips:**
 - The number of commas in --max_memory must match the number of GPUs in CUDA_VISIBLE_DEVICES.
 - If you encounter an OOM (Out-Of-Memory) error, reduce batch_size / eval_batch_size or decrease the number of GPUs used.
