@@ -50,7 +50,7 @@ Question:
 '''
 
 # set client
-client=OpenAI(api_key='sk-DJrylVD3AU0H2PVcdTD88vj9paUfi0kYCkWXBJF85e4Ut6lt',base_url = "https://35.aigcbest.top/v1")
+client=OpenAI(api_key='YOUR API KEY')
 
 def fetch_question(sample, max_retries=100):
     sparql = sample['sparql']
@@ -103,3 +103,4 @@ with ThreadPoolExecutor(max_workers=max_workers) as executor:
             print(f"Saved {len(corpus1)} questions to {filename}")
     
 json.dump(corpus1,open('count_question.json','w',encoding='utf-8'),indent=2,ensure_ascii=False)
+
