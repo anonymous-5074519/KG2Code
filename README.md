@@ -9,12 +9,15 @@ This is the accompanying code for the paper **KG2Code: From Knowledge Graphs to 
 ## Setup
 ### Environment Setup
 ```
-conda create -n CoTKR python=3.12
-conda activate CoTKR
-pip install -r requirement1.txt
-conda create -n tune python=3.12
+conda create -n KG2Code python=3.12
+conda activate KG2Code
+pip install -r KG2Code-requirements.txt
+conda create -n tune python=3.10
 conda activate tune
-pip install -r requirement2.txt
+pip install -r tune-requirements.txt
+conda create -n GNN python=3.8
+conda activate GNN
+pip install -r GNN-requirements.txt
 ```
 **In this work, we use three different environments. For fine-tuning LLMs, please use the tune environment. For the GNN and GNN+Text baselines, please use the GNN environment. For all other cases, please use the KG2Code environment.**
 ### LLM Setup
@@ -62,13 +65,13 @@ KG2Code/
                     └── dev.tsv
 ```
 ## Continual Training
-**We provide our fine-tuned KG-Coders lora checkpoints (fine-tuned on code-style corpus) in [KG-Coder.zip]() and our Text model lora checkpoints (fine-tuned on textual corpus) in [Text-Model.zip](). You can download it directly to the following folder and escape the continual training phase. You only need to merge the lora checkpoints into base model.**
+**We provide our fine-tuned KG-Coders lora checkpoints (fine-tuned on code-style corpus) in [KG-Coder.zip](https://drive.google.com/file/d/1hxY7kQag7n3jI5-hzGsLUYDICUyRf83k/view?usp=sharing) and our Text model lora checkpoints (fine-tuned on textual corpus) in [Text-Model.zip](https://drive.google.com/file/d/1FDJY7TuJVWmfoTuj_ovoo_Ysc9AwB-d7/view?usp=sharing). You can download it directly to the following folder and escape the continual training phase. You only need to merge the lora checkpoints into base model.**
 ### Corpus Construction
-**We provide our constructed code-style corpus in [pretrain.zip]() and corresponding textual corpus in [pretrain-text.zip](). You can download it directly to the following folder and escape the following corpus construction steps.**
+**We provide our constructed code-style corpus in [pretrain.zip](https://drive.google.com/file/d/1Y0YD6bsI8VpRyZD2DP3Dht3MwFrUkxg9/view?usp=sharing) and corresponding textual corpus in [pretrain-text.zip](https://drive.google.com/file/d/1spFJ8P7UV90JdyqxS6MRorRmjecQPSyq/view?usp=sharing). You can download it directly to the following folder and escape the following corpus construction steps.**
 If you want to generate your corpus, please follow these steps and be ready to spend a lot of money ;)
 #### Dict Setup
-1. We provide our collected ```endict.pkl``` and ```redict.pkl``` in [dict.zip](). Please download them into ```KG2Code/pretrain/kgqa``` and ```KG2Code/pretrain/kgc```.
-2. We provide the ```entity.txt``` and ```relation.txt``` we used in [data.zip](). Please download them into ```KG2Code/pretrain/kgqa``` and ```KG2Code/pretrain/kgc```.
+1. We provide our collected ```endict.pkl``` and ```redict.pkl``` in [dict.zip](https://drive.google.com/file/d/190_njuwwOgQaSWRB0WBvIQDbRe7cn3rG/view?usp=sharing). Please download them into ```KG2Code/pretrain/kgqa``` and ```KG2Code/pretrain/kgc```.
+2. We provide the ```entity.txt``` and ```relation.txt``` we used in [data.zip](https://drive.google.com/file/d/1rPOkCsZkC3TixHgRnbJxhBsmxnv5pIJa/view?usp=sharing). Please download them into ```KG2Code/pretrain/kgqa``` and ```KG2Code/pretrain/kgc```.
 #### KGQA
 1. Go to ```KG2Code/pretrain/kgqa```.
 2. Run ```dict_filter.py``` to construct the dict files for the following steps.
@@ -95,7 +98,7 @@ Go to ```KG2Code/instruction-tuning```. Run ```merge.py``` to generate training 
 1. Go to ```KG2Code/inference/KGQA/retrieve```.
 2. Run ```qald-retrieve.py``` to parse sparql and extract the groundtruth subgraph.
 3. Run ```graph-extend-stable.py``` to extend the groundtruth subgraph.
-4. Run ```graph-query.py``` to query the names of the entities and relations in subgraph. Please modify some key parameters like . ```entity.pkl``` and ```relation.pkl``` are provided in [dict.zip](). Please download them directly.
+4. Run ```graph-query.py``` to query the names of the entities and relations in subgraph. Please modify some key parameters like . ```entity.pkl``` and ```relation.pkl``` are provided in [dict.zip](https://drive.google.com/file/d/190_njuwwOgQaSWRB0WBvIQDbRe7cn3rG/view?usp=sharing). Please download them directly.
 5. Run ```graph-infer.py``` to change the prompt format into code-style.
 6. Go to ```KG2Code/inference/KGQA/answer```.
 7. Run ```answer-code.py``` to get the results for KG2Code. Run ```answer-text.py``` to get the results for Text baseline. Run ```answer-origin.py``` to get the results for Raw baseline for Llama-3.1-8B-Instruct. Run ```answer-code-direct.py``` to get the results for Raw baseline for DeepSeek-Coder-V2-Lite-Instruct. Run ```answer-r1.py``` to get the results for R1 baseline.
@@ -106,7 +109,7 @@ We conduct transfer experiments on GrailQA. For retrieval results, we directly u
 3. Go to ```KG2Code/inference/KGQA/transfer-KGQA/answer```.
 4. Run ```answer-code.py``` to get the results for KG2Code. Run ```answer-origin.py``` to get the results for Raw baseline. Run ```answer-text.py``` to get the results for Text baseline.
 ### KGC
-1. Go to ```KG2Code/inference/KGC/retrieve```. ```entity.pkl``` and ```relation.pkl``` are provided in [dict.zip](). Please download them directly and put it in ```KG2Code/inference/KGC/retrieve``` and ```KG2Code/inference/KGC/infer```. 
+1. Go to ```KG2Code/inference/KGC/retrieve```. ```entity.pkl``` and ```relation.pkl``` are provided in [dict.zip](https://drive.google.com/file/d/190_njuwwOgQaSWRB0WBvIQDbRe7cn3rG/view?usp=sharing). Please download them directly and put it in ```KG2Code/inference/KGC/retrieve``` and ```KG2Code/inference/KGC/infer```. 
 2. Run ```create_dict.py``` to create the dict files for the following steps.
 3. Run ```retrieve-2hop.py``` to retrieve the relevant the subgraphs for KGC tasks.
 4. Go to ```KG2Code/inference/KGC/infer```.
@@ -118,3 +121,125 @@ We conduct transfer experiments on WN18RR. We follow [KG-BERT](https://github.co
 3. Run ```retrieve-2hop.py``` to retrieve the subgraph for inference.
 4. Go to ```KG2Code/inference/KGC/transfer-KGC/infer```.
 5. Run ```infer-code.py``` to get the results for KG2Code. Run ```infer-text.py``` to get the results for Text baseline. Run ```infer-origin.py``` to get the results for Raw baseline.
+###  KG2Text Variants
+For three varaints of KG2Text (KG-to-Text, Summary, CoTKR), we first collect the corpus from gpt-4o and then instruct tune Llama-3.1-8B-Instruct.
+We provide the fine-tuned [lora checkpoints](https://drive.google.com/file/d/1NTUnO1vGSC5dPiF3sToPLrWat3nfJkHL/view?usp=sharing). You can download it and escape the corpus construction phase.
+We also provide the [collected corpus](https://drive.google.com/file/d/1pkZan98mFJ5H6Jhr-IjRMozTmVHbJljt/view?usp=sharing). You can download it and instruct tune your own models without collecting training data.
+1. Copy the dict file (endict.pkl, redict.pkl, in_en_re.pkl, out_en_re.pkl, in_triple.pkl, out_triple.pkl) from ```KG2Code/inference/KGC/infer``` into ```KG2Code/KR/answer```.
+2. Go to ```KG2Code/KR/corpus```.
+3. Run ```kg-to-text.py``` to collect the training corpus for KG-to-Text. Run ```summary-kgqa.py``` to collect the training corpus for summary for KGQA. Run ```summary-kgc.py``` to collect the training corpus for summary for KGC. Run ```cotkr-kgqa.py``` to collect the training corpus for cotkr for KGQA. Run ```cotkr-kgc.py``` to collect the training corpus for cotkr for KGC.
+4. Run ```merge.py``` to merge the training corpus for KGQA and KGC. You only need to deal with Summary and CoTKR.
+5. Go to ```KG2Code/KR/instruction-tuning```. Run ```run_llama.sh``` to instruct tune the model. Please modify the key parameters like "llm".
+6. Go to ```KG2Code/KR/rewrite```. Run ```rewrite.py``` to generate the knowledge representation of these baselines. Please modify the key parameters like "KR" and "TASK".
+7. Go to ```KG2Code/KR/answer```. Run ```answer-kgqa.py``` for KGQA and run ```answer-kgc.py``` for KGC. Please modify the key parameters like "KR" and "DATASET".
+### GNN/GNN+Text
+We mainly use the code from [G-Retriever](https://github.com/XiaoxinHe/G-Retriever) to implement GNN/GNN+Text baseline.
+#### Data Preprocessing
+1. Go to ```KG2Code/G-Retriever-main```.
+2. Run the following command.
+```bash
+python -m src.dataset.preprocess.kgqa
+python -m src.dataset.kgqa
+```
+#### Training
+1. Go to ```KG2Code/G-Retriever-main```.
+2. GNN: 
+```bash
+export CUDA_VISIBLE_DEVICES=0
+export ONLY_GNN=1
+python train.py \
+  --dataset kgqa \
+  --model_name graph_llm \
+  --llm_model_path /path/to/LLM \
+  --max_memory 24 \
+  --batch_size 1 \
+  --only_gnn True \
+  --eval_batch_size 1
+```
+3. GNN+Text:
+```bash
+export CUDA_VISIBLE_DEVICES=0,1
+python train.py \
+  --dataset kgqa \
+  --model_name graph_llm \
+  --llm_model_path /path/to/Meta-Llama-3.1-8B-Instruct \
+  --max_memory 24,24 \
+  --batch_size 4 \
+  --eval_batch_size 4 \
+  --only_gnn False \
+  --llm_frozen True \
+  --llm_model_name Meta-Llama-3.1-8B-Instruct
+```
+#### Inference
+1. Go to ```KG2Code/G-Retriever-main```.
+2. GNN (take DeepSeek for example):
+```bash
+export CUDA_VISIBLE_DEVICES=0
+export ONLY_GNN=1
+python inference.py \
+  --dataset kgqa \
+  --model_name graph_llm \
+  --max_memory 24 \
+  --llm_model_path /path/to/DeepSeek-Coder-V2-Lite-Instruct \
+  --eval_batch_size 32 \
+  --only_gnn True \
+  --llm_frozen True \
+  --llm_model_name DeepSeek-Coder-V2-Lite-Instruct-GNN \
+  --ckpt_path /path/to/best_gnn_ckpt.pth
+```
+3. GNN+Text (take Llama for example):
+```bash
+export CUDA_VISIBLE_DEVICES=0,1
+python inference.py \
+  --dataset kgqa \
+  --model_name graph_llm \
+  --max_memory 24,24 \
+  --llm_model_path /path/to/Meta-Llama-3.1-8B-Instruct \
+  --eval_batch_size 12 \
+  --only_gnn False \
+  --llm_frozen True \
+  --llm_model_name Meta-Llama-3.1-8B-Instruct \
+  --ckpt_path /path/to/best_llama_ckpt.pth
+```
+#### Script Introduction
+We provide script files to facilitate easier reproduction.
+- Training: `run_GNN_only.sh` for GNN and `run_GNN&Text.sh` for GNN+Text.
+- Inference: `run_inference.sh`.
+- Batch evaluation: `run_Test_all_GNNonly_kgqa.sh` for GNN and `run_Test_all_kgqa.sh` for GNN+Text.
+Key Parameters:
+```bash
+# Model Checkpoints
+LLAMA_MODEL_PATH="/path/to/Meta-Llama-3.1-8B-Instruct"
+LLAMA_CKPT="/path/to/llama_best.pth"
+DEEPSEEK_MODEL_PATH="/path/to/DeepSeek-Coder-V2-Lite-Instruct"
+DEEPSEEK_CKPT="/path/to/deepseek_best.pth"
+# The evaluation set (located in the Test/ directory)
+FILES=("QALD-9.jsonl" "QALD-10.jsonl" "test.json")
+# DeepSeek skip list (by stem name, i.e., filename without extension)
+SKIP_DEEPSEEK_FILES=("test")
+# GPU Card Setting
+export CUDA_VISIBLE_DEVICES=0,1
+```
+**Evaluate on your own file:**  
+Place your xxx.jsonl/json file into the Test/ directory and add its filename to FILES=(...). The script will automatically:  
+(1) Copy it to tmp_json/&lt;stem&gt;/test.jsonl and create empty train/dev files;  
+(2) Preprocess it into an independent cache directory dataset/Test_&lt;stem&gt; to avoid contaminating the main dataset cache;  
+(3) Output the results in output/Test/&lt;stem&gt;/&lt;task&gt;/\*.csv.  
+**Parameter Reference and Description**
+| Parameter | Meaning | Common Values / Examples |
+|---|---|---|
+| `CUDA_VISIBLE_DEVICES` | Specifies which GPU(s) to use | `0` or `0,1,2` |
+| `--max_memory` | GPU memory limits (GB) in the order of devices | Single GPU `24`；Dual GPU `24,24` |
+| `--dataset` | Task or dataset type | `kgqa` |
+| `--only_gnn` | Whether to use only the GNN module | `True`/`False` |
+| `--llm_frozen` | Freeze LLM parameters | Usually `True` |
+| `--llm_model_path` | Local directory of LLM weights | `/path/to/Meta-Llama-3.1-8B-Instruct` |
+| `--llm_model_name` | Identifier for the LLM (with or without `-GNN`) | `Meta-Llama-3.1-8B-Instruct`、`DeepSeek-Coder-V2-Lite-Instruct(-GNN)` |
+| `--ckpt_path` | Path to the best checkpoint produced during training | `/path/to/...checkpoint_best.pth` |
+| `--batch_size` | Training batch size | Adjust according to GPU memory |
+| `--eval_batch_size` | Inference batch size | Adjust according to GPU memory and model size |
+| `--output_dir` | Output directory for inference results | Defaults to a predefined structure if not specified |
+**Tips:**
+- The number of commas in --max_memory must match the number of GPUs in CUDA_VISIBLE_DEVICES.
+- If you encounter an OOM (Out-Of-Memory) error, reduce batch_size / eval_batch_size or decrease the number of GPUs used.
+- Mismatched weight or model paths can cause loading errors — ensure that --llm_model_name and the checkpoint naming are consistent (e.g., whether -GNN is included).
