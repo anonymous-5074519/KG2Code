@@ -8,7 +8,7 @@ from openai import OpenAI
 
 random.seed(42)
 # set client
-client=OpenAI(api_key='sk-DJrylVD3AU0H2PVcdTD88vj9paUfi0kYCkWXBJF85e4Ut6lt',base_url = "https://35.aigcbest.top/v1")
+client=OpenAI(api_key='YOUR API KEY')
 
 cot_prompt='''Your task is to generate the Chain-of-Thought (CoT) reasoning process for a link prediction task, given the masked triple, the graph, and the answer. The reasoning should integrate both the structural information from the graph and your pre-existing knowledge. If the graph information is incomplete or irrelevant, actively supplement it with your own knowledge to arrive at the answer.
 Masked Triple: ([MASK], spouse, Charles the Simple)
@@ -103,3 +103,4 @@ if __name__ == "__main__":
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(data2, f, indent=2, ensure_ascii=False)
         print(f"Saved final {len(data2)} samples to {filename}")
+
